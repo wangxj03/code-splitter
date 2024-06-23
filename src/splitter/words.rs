@@ -25,9 +25,9 @@ mod tests {
     #[test]
     fn test_size() {
         let counter = WordCounter;
-        let text = "I can feel the magic, can you?";
+        let text = "hello, world!";
         let size = counter.size(text).unwrap();
-        assert_eq!(size, 7);
+        assert_eq!(size, 2);
     }
 
     #[test]

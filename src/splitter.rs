@@ -1,3 +1,4 @@
+mod chars;
 #[cfg(feature = "tokenizers")]
 mod huggingface;
 #[cfg(feature = "tiktoken-rs")]
