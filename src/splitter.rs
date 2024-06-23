@@ -78,7 +78,7 @@ where
 
         if chunk_size <= self.max_size {
             return Ok(vec![Chunk {
-                subtree: format!("{}: {}", format_node(&node, depth), chunk_size),
+                subtree: format!("{}: {}", format_node(node, depth), chunk_size),
                 range: node.range(),
                 size: chunk_size,
             }]);

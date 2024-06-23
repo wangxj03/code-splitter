@@ -28,7 +28,6 @@ impl fmt::Display for Chunk {
 
 impl Chunk {
     pub fn utf8_lossy(&self, code: &[u8]) -> String {
-        String::from_utf8_lossy(&code[self.range.start_byte as usize..self.range.end_byte])
-            .to_string()
+        String::from_utf8_lossy(&code[self.range.start_byte..self.range.end_byte]).to_string()
     }
 }
