@@ -1,9 +1,7 @@
 #[cfg(feature = "tokenizers")]
 mod huggingface;
-
 #[cfg(feature = "tiktoken-rs")]
 mod tiktoken;
-
 mod words;
 
 use crate::chunk::Chunk;
@@ -11,7 +9,8 @@ use crate::error::Result;
 use std::str;
 use tree_sitter::{Language, Node, Parser};
 
-const DEFAULT_MAX_CHUNK_SIZE: usize = 512;
+/// Default maximum size of a chunk.
+const DEFAULT_MAX_SIZE: usize = 512;
 
 pub trait Sizer {
     fn size(&self, text: &str) -> Result<usize>;
@@ -19,28 +18,42 @@ pub trait Sizer {
 
 /// A struct for splitting code into chunks.
 pub struct Splitter<T: Sizer> {
-    chunk_sizer: T,
-    max_chunk_size: usize,
+    language: Language,
+    sizer: T,
+    max_size: usize,
 }
 
 impl<T> Splitter<T>
 where
     T: Sizer,
 {
-    pub fn with_max_chunk_size(mut self, max_chunk_size: usize) -> Self {
-        self.max_chunk_size = max_chunk_size;
+    pub fn new(language: Language, sizer: T) -> Result<Self> {
+        // Ensure tree-sitter-<language> crate can be loaded
+        Parser::new().set_language(&language)?;
+
+        Ok(Self {
+            language,
+            sizer,
+            max_size: DEFAULT_MAX_SIZE,
+        })
+    }
+
+    pub fn with_max_size(mut self, max_size: usize) -> Self {
+        self.max_size = max_size;
         self
     }
 
-    /// Split the code into chunks with no larger than `max_chunk_size`.
-    pub fn split(&self, code: &[u8], lang: &Language) -> Result<Vec<Chunk>> {
+    /// Split the code into chunks with no larger than `max_size`.
+    pub fn split(&self, code: &[u8]) -> Result<Vec<Chunk>> {
         if code.is_empty() {
             return Ok(vec![]);
         }
 
         let mut parser = Parser::new();
-        parser.set_language(lang)?;
-        let tree = parser.parse(code, None).ok_or("Failed to parse code")?;
+        parser
+            .set_language(&self.language)
+            .expect("Error loading tree-sitter language");
+        let tree = parser.parse(code, None).ok_or("Error parsing code")?;
         let root_node = tree.root_node();
 
         let chunks = self.split_node(&root_node, 0, code)?;
@@ -48,16 +61,16 @@ where
         Ok(chunks)
     }
 
-    /// Split the code into chunks with no larger than `max_chunk_size`.
+    /// Split the code into chunks with no larger than `max_size`.
     fn split_node(&self, node: &Node, depth: usize, code: &[u8]) -> Result<Vec<Chunk>> {
         let text = node.utf8_text(code)?;
-        let chunk_size = self.chunk_sizer.size(text)?;
+        let chunk_size = self.sizer.size(text)?;
 
         if chunk_size == 0 {
             return Ok(vec![]);
         }
 
-        if chunk_size <= self.max_chunk_size {
+        if chunk_size <= self.max_size {
             return Ok(vec![Chunk {
                 subtree: format!("{}: {}", format_node(&node, depth), chunk_size),
                 range: node.range(),
@@ -76,7 +89,7 @@ where
                 if let Some(tail) = acc.pop() {
                     if let Some(head) = next.first_mut() {
                         let joined_size = self.joined_size(&tail, head, code)?;
-                        if joined_size <= self.max_chunk_size {
+                        if joined_size <= self.max_size {
                             // Concatenate the tail and head names
                             head.subtree = format!("{}\n{}", tail.subtree, head.subtree);
                             head.range.start_byte = tail.range.start_byte;
@@ -100,7 +113,7 @@ where
     fn joined_size(&self, chunk: &Chunk, next: &Chunk, code: &[u8]) -> Result<usize> {
         let joined_bytes = &code[chunk.range.start_byte..next.range.end_byte];
         let joined_text = str::from_utf8(joined_bytes)?;
-        self.chunk_sizer.size(joined_text)
+        self.sizer.size(joined_text)
     }
 }
 

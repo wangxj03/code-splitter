@@ -1,20 +1,19 @@
+use tree_sitter::Language;
+
 use crate::error::Result;
-use crate::splitter::{Sizer, Splitter, DEFAULT_MAX_CHUNK_SIZE};
+use crate::splitter::{Sizer, Splitter};
 
-pub struct Words;
+pub struct WordCounter;
 
-impl Sizer for Words {
+impl Sizer for WordCounter {
     fn size(&self, text: &str) -> Result<usize> {
         Ok(text.split_whitespace().count())
     }
 }
 
-impl Splitter<Words> {
-    pub fn words() -> Self {
-        Splitter {
-            chunk_sizer: Words,
-            max_chunk_size: DEFAULT_MAX_CHUNK_SIZE,
-        }
+impl Splitter<WordCounter> {
+    pub fn by_words(language: Language) -> Result<Self> {
+        Splitter::new(language, WordCounter)
     }
 }
 
@@ -25,9 +24,9 @@ mod tests {
 
     #[test]
     fn test_size() {
-        let words = Words;
+        let counter = WordCounter;
         let text = "I can feel the magic, can you?";
-        let size = words.size(text).unwrap();
+        let size = counter.size(text).unwrap();
         assert_eq!(size, 7);
     }
 
@@ -35,8 +34,8 @@ mod tests {
     fn test_split_empty() {
         let code = b"";
         let lang = tree_sitter_md::language();
-        let splitter = Splitter::words();
-        let chunks = splitter.split(code, &lang).unwrap();
+        let splitter = Splitter::by_words(lang).unwrap();
+        let chunks = splitter.split(code).unwrap();
 
         assert_eq!(chunks.len(), 0);
     }
@@ -45,14 +44,14 @@ mod tests {
     fn test_split_md() {
         let code = fs::read("testdata/sample.md").unwrap();
         let lang = tree_sitter_md::language();
-        let max_chunk_size = 50;
-        let splitter = Splitter::words().with_max_chunk_size(max_chunk_size);
-        let chunks = splitter.split(&code, &lang).unwrap();
+        let max_words = 50;
+        let splitter = Splitter::by_words(lang).unwrap().with_max_size(max_words);
+        let chunks = splitter.split(&code).unwrap();
 
         assert_eq!(chunks.len(), 5);
         chunks.into_iter().for_each(|chunk| {
             println!("{chunk}\n");
-            assert!(chunk.size <= max_chunk_size);
+            assert!(chunk.size <= max_words);
         });
     }
 }

@@ -1,7 +1,8 @@
 use tokenizers::Tokenizer;
+use tree_sitter::Language;
 
 use crate::error::Result;
-use crate::splitter::{Sizer, Splitter, DEFAULT_MAX_CHUNK_SIZE};
+use crate::splitter::{Sizer, Splitter};
 
 impl Sizer for Tokenizer {
     fn size(&self, text: &str) -> Result<usize> {
@@ -11,11 +12,8 @@ impl Sizer for Tokenizer {
 }
 
 impl Splitter<Tokenizer> {
-    pub fn from_huggingface(tokenizer: Tokenizer) -> Self {
-        Splitter {
-            chunk_sizer: tokenizer,
-            max_chunk_size: DEFAULT_MAX_CHUNK_SIZE,
-        }
+    pub fn by_huggingface_tokens(language: Language, tokenizer: Tokenizer) -> Result<Self> {
+        Splitter::new(language, tokenizer)
     }
 }
 

@@ -1,7 +1,8 @@
 use tiktoken_rs::CoreBPE;
+use tree_sitter::Language;
 
 use crate::error::Result;
-use crate::splitter::{Sizer, Splitter, DEFAULT_MAX_CHUNK_SIZE};
+use crate::splitter::{Sizer, Splitter};
 
 impl Sizer for CoreBPE {
     fn size(&self, text: &str) -> Result<usize> {
@@ -11,11 +12,8 @@ impl Sizer for CoreBPE {
 }
 
 impl Splitter<CoreBPE> {
-    pub fn from_tiktoken(bpe: CoreBPE) -> Self {
-        Splitter {
-            chunk_sizer: bpe,
-            max_chunk_size: DEFAULT_MAX_CHUNK_SIZE,
-        }
+    pub fn by_tiktoken_tokens(language: Language, bpe: CoreBPE) -> Result<Self> {
+        Splitter::new(language, bpe)
     }
 }
 
