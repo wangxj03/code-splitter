@@ -13,15 +13,18 @@ use tree_sitter::{Language, Node, Parser};
 /// Default maximum size of a chunk.
 const DEFAULT_MAX_SIZE: usize = 512;
 
-/// A trait for counting the size of a code chunk.
+/// An interface for counting the size of a code chunk.
 pub trait Sizer {
     fn size(&self, text: &str) -> Result<usize>;
 }
 
 /// A struct for splitting code into chunks.
 pub struct Splitter<T: Sizer> {
+    /// Language of the code.
     language: Language,
+    /// Sizer for counting the size of code chunks.
     sizer: T,
+    /// Maximum size of a code chunk.
     max_size: usize,
 }
 

@@ -4,8 +4,11 @@ use tree_sitter::Range;
 /// A chunk of code with a subtree and a range.
 #[derive(Debug)]
 pub struct Chunk {
+    /// Subtree representation of the code chunk.
     pub subtree: String,
+    /// Range of the code chunk.
     pub range: Range,
+    /// Size of the code chunk.
     pub size: usize,
 }
 
