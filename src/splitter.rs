@@ -1,22 +1,12 @@
-mod chars;
-#[cfg(feature = "tokenizers")]
-mod huggingface;
-#[cfg(feature = "tiktoken-rs")]
-mod tiktoken;
-mod words;
-
 use crate::chunk::Chunk;
 use crate::error::Result;
+use crate::sizer::Sizer;
+
 use std::str;
 use tree_sitter::{Language, Node, Parser};
 
 /// Default maximum size of a chunk.
 const DEFAULT_MAX_SIZE: usize = 512;
-
-/// An interface for counting the size of a code chunk.
-pub trait Sizer {
-    fn size(&self, text: &str) -> Result<usize>;
-}
 
 /// A struct for splitting code into chunks.
 pub struct Splitter<T: Sizer> {
@@ -33,6 +23,46 @@ where
     T: Sizer,
 {
     /// Create a new `Splitter` that counts the size of code chunks with the given sizer.
+    ///
+    /// # Example: split by characters
+    /// ```
+    /// use code_splitter::{CharCounter, Splitter};
+    ///
+    /// let lang = tree_sitter_md::language();
+    /// let splitter = Splitter::new(lang, CharCounter).unwrap();
+    /// let chunks = splitter.split(b"hello, world!").unwrap();
+    /// ```
+    ///
+    /// # Example: split by words
+    /// ```
+    /// use code_splitter::{Splitter, WordCounter};
+    ///
+    /// let lang = tree_sitter_md::language();
+    /// let splitter = Splitter::new(lang, WordCounter).unwrap();
+    /// let chunks = splitter.split(b"hello, world!").unwrap();
+    /// ```
+    ///
+    /// # Example: split by tokens with huggingface tokenizer
+    /// ```
+    /// use code_splitter::Splitter;
+    /// use tokenizers::Tokenizer;
+    ///
+    /// let lang = tree_sitter_md::language();
+    /// let tokenizer = Tokenizer::from_pretrained("bert-base-cased", None).unwrap();
+    /// let splitter = Splitter::new(lang, tokenizer).unwrap();
+    /// let chunks = splitter.split(b"hello, world!").unwrap();
+    /// ```
+    ///
+    /// # Example: split by tokens with tiktoken core BPE
+    /// ```
+    /// use code_splitter::Splitter;
+    /// use tiktoken_rs::cl100k_base;
+    ///
+    /// let lang = tree_sitter_md::language();
+    /// let bpe = cl100k_base().unwrap();
+    /// let splitter = Splitter::new(lang, bpe).unwrap();
+    /// let chunks = splitter.split(b"hello, world!").unwrap();
+    /// ```
     pub fn new(language: Language, sizer: T) -> Result<Self> {
         // Ensure tree-sitter-<language> crate can be loaded
         Parser::new().set_language(&language)?;
@@ -44,7 +74,18 @@ where
         })
     }
 
-    /// Set the maximum size of a chunk.
+    /// Set the maximum size of a chunk. The default is 512.
+    ///
+    /// # Example: set the maximum size to 256
+    /// ```
+    /// use code_splitter::{CharCounter, Splitter};
+    ///
+    /// let lang = tree_sitter_md::language();
+    /// let splitter = Splitter::new(lang, CharCounter)
+    ///   .unwrap()
+    ///   .with_max_size(256);
+    /// let chunks = splitter.split(b"hello, world!").unwrap();
+    /// ```
     pub fn with_max_size(mut self, max_size: usize) -> Self {
         self.max_size = max_size;
         self
