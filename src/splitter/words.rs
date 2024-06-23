@@ -12,7 +12,7 @@ impl Sizer for WordCounter {
 }
 
 impl Splitter<WordCounter> {
-    pub fn by_words(language: Language) -> Result<Self> {
+    pub fn with_word_counter(language: Language) -> Result<Self> {
         Splitter::new(language, WordCounter)
     }
 }
@@ -34,7 +34,7 @@ mod tests {
     fn test_split_empty() {
         let code = b"";
         let lang = tree_sitter_md::language();
-        let splitter = Splitter::by_words(lang).unwrap();
+        let splitter = Splitter::with_word_counter(lang).unwrap();
         let chunks = splitter.split(code).unwrap();
 
         assert_eq!(chunks.len(), 0);
@@ -45,7 +45,9 @@ mod tests {
         let code = fs::read("testdata/sample.md").unwrap();
         let lang = tree_sitter_md::language();
         let max_words = 50;
-        let splitter = Splitter::by_words(lang).unwrap().with_max_size(max_words);
+        let splitter = Splitter::with_word_counter(lang)
+            .unwrap()
+            .with_max_size(max_words);
         let chunks = splitter.split(&code).unwrap();
 
         assert_eq!(chunks.len(), 5);

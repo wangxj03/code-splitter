@@ -12,7 +12,7 @@ impl Sizer for CoreBPE {
 }
 
 impl Splitter<CoreBPE> {
-    pub fn by_tiktoken_tokens(language: Language, bpe: CoreBPE) -> Result<Self> {
+    pub fn with_core_bpe(language: Language, bpe: CoreBPE) -> Result<Self> {
         Splitter::new(language, bpe)
     }
 }

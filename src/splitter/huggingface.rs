@@ -12,7 +12,7 @@ impl Sizer for Tokenizer {
 }
 
 impl Splitter<Tokenizer> {
-    pub fn by_huggingface_tokens(language: Language, tokenizer: Tokenizer) -> Result<Self> {
+    pub fn with_tokenizer(language: Language, tokenizer: Tokenizer) -> Result<Self> {
         Splitter::new(language, tokenizer)
     }
 }
