@@ -1,6 +1,8 @@
 use std::fmt;
 use tree_sitter::Range;
 
+/// A chunk of code with a subtree and a range.
+#[derive(Debug)]
 pub struct Chunk {
     pub subtree: String,
     pub range: Range,
@@ -8,6 +10,7 @@ pub struct Chunk {
 }
 
 impl fmt::Display for Chunk {
+    /// Display the chunk with its range and subtree.
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,

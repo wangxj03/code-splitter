@@ -13,6 +13,7 @@ use tree_sitter::{Language, Node, Parser};
 /// Default maximum size of a chunk.
 const DEFAULT_MAX_SIZE: usize = 512;
 
+/// A trait for counting the size of a code chunk.
 pub trait Sizer {
     fn size(&self, text: &str) -> Result<usize>;
 }
@@ -28,6 +29,7 @@ impl<T> Splitter<T>
 where
     T: Sizer,
 {
+    /// Create a new `Splitter` that counts the size of code chunks with the given sizer.
     pub fn new(language: Language, sizer: T) -> Result<Self> {
         // Ensure tree-sitter-<language> crate can be loaded
         Parser::new().set_language(&language)?;
@@ -39,6 +41,7 @@ where
         })
     }
 
+    /// Set the maximum size of a chunk.
     pub fn with_max_size(mut self, max_size: usize) -> Self {
         self.max_size = max_size;
         self
@@ -62,7 +65,6 @@ where
         Ok(chunks)
     }
 
-    /// Split the code into chunks with no larger than `max_size`.
     fn split_node(&self, node: &Node, depth: usize, code: &[u8]) -> Result<Vec<Chunk>> {
         let text = node.utf8_text(code)?;
         let chunk_size = self.sizer.size(text)?;

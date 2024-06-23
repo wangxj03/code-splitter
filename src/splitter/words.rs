@@ -3,15 +3,28 @@ use tree_sitter::Language;
 use crate::error::Result;
 use crate::splitter::{Sizer, Splitter};
 
+/// A marker struct for counting words in code chunks.
 pub struct WordCounter;
 
 impl Sizer for WordCounter {
+    /// Count the number of words in the given text.
     fn size(&self, text: &str) -> Result<usize> {
         Ok(text.split_whitespace().count())
     }
 }
 
 impl Splitter<WordCounter> {
+    /// Create a new `Splitter` that counts words in code chunks.
+    ///
+    /// ```
+    /// use code_splitter::Splitter;
+    ///
+    /// let lang = tree_sitter_md::language();
+    /// let splitter = Splitter::with_word_counter(lang).unwrap();
+    ///
+    /// let code = b"hello, world!";
+    /// let chunks = splitter.split(code).unwrap();
+    /// ```
     pub fn with_word_counter(language: Language) -> Result<Self> {
         Splitter::new(language, WordCounter)
     }
