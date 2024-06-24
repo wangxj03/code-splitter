@@ -1,7 +1,7 @@
 use code_splitter::{CharCounter, Sizer, Splitter, WordCounter};
 use std::fs;
 
-const TEST_FILE: &str = "tests/testdata/greetings.go";
+const TEST_FILE: &str = "tests/testdata/rectangle.go";
 
 fn read_test_file() -> Vec<u8> {
     fs::read(TEST_FILE).expect("Failed to read test file")
