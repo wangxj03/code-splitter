@@ -1,7 +1,7 @@
 # code-splitter
 
 [![Docs](https://docs.rs/code-splitter/badge.svg)](https://docs.rs/code-splitter/)
-[![Licence](https://img.shields.io/crates/l/code-splitter)](https://github.com/wangxj03/code-splitter/blob/main/LICENSE.txt)
+[![License](https://img.shields.io/crates/l/code-splitter)](https://github.com/wangxj03/code-splitter/blob/main/LICENSE.txt)
 [![Crates.io](https://img.shields.io/crates/v/code-splitter)](https://crates.io/crates/code-splitter)
 
 - **Rust Crate**: [code-splitter](https://crates.io/crates/code-splitter)
@@ -9,9 +9,9 @@
 
 ## Introduction
 
-Welcome to the code-splitter, a Rust crate designed to split source code into chunks. It is particularly useful in Retrieval Augmented Generation (RAG), a technique that enhances the generation capabilities of Large Language Models (LLM) by leveraging external knowledge sources.
+Welcome to code-splitter, a Rust crate designed to split source code into chunks. It is particularly useful in Retrieval Augmented Generation (RAG), a technique that enhances the generation capabilities of Large Language Models (LLM) by leveraging external knowledge sources.
 
-In a prototypical RAG application, longer documents are first split into chunks, encoded into embeddings, and then indexed into a vector database. When handling a new user query, the system first searches the vector database, and retrieves the most relevant chunks based on their embeddings. These retrieved chunks are then used as context to augment the query, which is subsequently processed by a LLM. The chunking is essential for several reasons
+In a prototypical RAG application, longer documents are first split into chunks, encoded into embeddings, and then indexed into a vector database. When handling a new user query, the system first searches the vector database and retrieves the most relevant chunks based on their embeddings. These retrieved chunks are then used as context to augment the query, which is subsequently processed by an LLM. Chunking is essential for several reasons:
 
 - Model Input Constraints: Embedding models, such as OpenAI's [text-embedding-3-small](https://platform.openai.com/docs/guides/embeddings/embedding-models), have a fixed maximum input token limit (e.g., 8192 tokens). Longer documents need to be divided into smaller chunks to fit within these input constraints.
 
@@ -27,7 +27,7 @@ It supports all languages that can be [parsed](https://tree-sitter.github.io/tre
 
 ## Get Started
 
-Add it to your project
+Add it to your project:
 
 ```sh
 cargo add code-splitter
@@ -38,7 +38,7 @@ cargo add tree-sitter-<language>
 
 ```rust
 use code_splitter::{CharCounter, Splitter};
-use std::fs
+use std::fs;
 
 let max_chars = 1000;  // Maximum number of characters in a code chunk
 let lang = tree_sitter_rust::language();  // Requires `cargo add tree-sitter-rust`
@@ -54,7 +54,7 @@ let chunks = splitter.split(&code);
 
 ```rust
 use code_splitter::{Splitter, WordCounter};
-use std::fs
+use std::fs;
 
 let max_words = 200;  // Maximum number of words in a code chunk
 let lang = tree_sitter_rust::language();  // Requires `cargo add tree-sitter-rust`
@@ -76,7 +76,7 @@ cargo add code-splitter --features tokenizers
 
 ```rust
 use code_splitter::Splitter;
-use std::fs
+use std::fs;
 use tokenizers::Tokenizer;
 
 let max_tokens = 500;  // Maximum number of tokens in a code chunk
@@ -101,7 +101,7 @@ cargo add code-splitter --features tiktoken-rs
 
 ```rust
 use code_splitter::Splitter;
-use std::fs
+use std::fs;
 use tiktoken_rs::cl100k_base;
 
 let max_tokens = 500;  // Maximum number of tokens in a code chunk
@@ -117,6 +117,6 @@ let chunks = splitter.split(&code).unwrap();
 
 ## Inspiration
 
-This crate was inspired by LlamaIndex's [CodeSplitter](https://docs.llamaindex.ai/en/v0.10.19/api/llama_index.core.node_parser.CodeSplitter.html) which in turn was based on SweepAI's blog [post](https://docs.sweep.dev/blogs/chunking-2m-files).
+This crate was inspired by LlamaIndex's [CodeSplitter](https://docs.llamaindex.ai/en/v0.10.19/api/llama_index.core.node_parser.CodeSplitter.html) which, in turn, was based on SweepAI's blog [post](https://docs.sweep.dev/blogs/chunking-2m-files).
 
 The project setup was inspired by [text-splitter](https://github.com/benbrandt/text-splitter), but the splitting algorithm was developed independently.
