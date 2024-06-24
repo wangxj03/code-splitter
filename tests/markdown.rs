@@ -15,9 +15,11 @@ where
     let lang = tree_sitter_md::language();
 
     let splitter = Splitter::new(lang, sizer)
-        .expect("Failed to create splitter")
+        .expect("Failed to create markdown splitter")
         .with_max_size(max_size);
-    let chunks = splitter.split(&code).expect("Failed to split code");
+    let chunks = splitter
+        .split(&code)
+        .expect("Failed to split markdown code");
 
     for (i, chunk) in chunks.iter().enumerate() {
         println!("{i} {chunk}\n");
@@ -29,6 +31,7 @@ fn split_by_chars() {
     split_and_show(CharCounter, 200);
 }
 
+#[cfg(feature = "tokenizers")]
 #[test]
 fn split_by_tokens_huggingface() {
     use tokenizers::tokenizer::Tokenizer;
@@ -37,6 +40,7 @@ fn split_by_tokens_huggingface() {
     split_and_show(tokenizer, 100);
 }
 
+#[cfg(feature = "tiktoken-rs")]
 #[test]
 fn split_by_tokens_tiktoken() {
     use tiktoken_rs::cl100k_base;
