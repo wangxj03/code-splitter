@@ -44,6 +44,8 @@ where
     ///
     /// # Example: split by tokens with huggingface tokenizer
     /// ```
+    /// # #[cfg(feature = "tokenizers")]
+    /// # {
     /// use code_splitter::Splitter;
     /// use tokenizers::Tokenizer;
     ///
@@ -51,10 +53,13 @@ where
     /// let tokenizer = Tokenizer::from_pretrained("bert-base-cased", None).unwrap();
     /// let splitter = Splitter::new(lang, tokenizer).unwrap();
     /// let chunks = splitter.split(b"hello, world!").unwrap();
+    /// # }
     /// ```
     ///
     /// # Example: split by tokens with tiktoken core BPE
     /// ```
+    /// # #[cfg(feature = "tiktoken-rs")]
+    /// # {
     /// use code_splitter::Splitter;
     /// use tiktoken_rs::cl100k_base;
     ///
@@ -62,6 +67,7 @@ where
     /// let bpe = cl100k_base().unwrap();
     /// let splitter = Splitter::new(lang, bpe).unwrap();
     /// let chunks = splitter.split(b"hello, world!").unwrap();
+    /// # }
     /// ```
     pub fn new(language: Language, sizer: T) -> Result<Self> {
         // Ensure tree-sitter-<language> crate can be loaded
