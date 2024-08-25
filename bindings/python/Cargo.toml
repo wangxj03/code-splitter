@@ -1,5 +1,5 @@
 [package]
-name = "code-splitter"
+name = "code-splitter-python"
 version = "0.1.0"
 edition = "2021"
 
@@ -10,3 +10,10 @@ crate-type = ["cdylib"]
 
 [dependencies]
 pyo3 = "0.21.1"
+code-splitter = { path = "../..", features = [
+    "tiktoken-rs",
+    "tokenizers",
+]}
+tiktoken-rs = { version = "0.5.9", optional = true }
+tokenizers = { version = "0.19.1", features = ["http"], optional = true}
+tree-sitter = "0.22"
