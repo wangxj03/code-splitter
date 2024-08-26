@@ -3,7 +3,7 @@ use pyo3::types::PyBytes;
 use tree_sitter::Language;
 
 use crate::chunk::Chunk;
-use ::code_splitter::{CharCounter, Splitter};
+use ::code_splitter::{CharCounter, Sizer, Splitter, WordCounter};
 
 const DEFAULT_MAX_SIZE: usize = 512;
 
@@ -26,16 +26,12 @@ impl SupportedLanguage {
     }
 }
 
-#[pyclass]
-pub struct CharSplitter {
-    splitter: Splitter<CharCounter>,
+struct GenericSplitter<T: Sizer> {
+    splitter: Splitter<T>,
 }
 
-#[pymethods]
-impl CharSplitter {
-    #[new]
-    #[pyo3(signature = (language, max_size = DEFAULT_MAX_SIZE))]
-    fn new(language: &str, max_size: usize) -> PyResult<Self> {
+impl<T: Sizer> GenericSplitter<T> {
+    fn new(language: &str, max_size: usize, sizer: T) -> PyResult<Self> {
         let supported_language = match language.to_lowercase().as_str() {
             "golang" => SupportedLanguage::Golang,
             "markdown" => SupportedLanguage::Markdown,
@@ -48,11 +44,11 @@ impl CharSplitter {
             }
         };
 
-        let splitter = Splitter::new(supported_language.as_language(), CharCounter)
+        let splitter = Splitter::new(supported_language.as_language(), sizer)
             .map_err(|e| PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(e.to_string()))?
             .with_max_size(max_size);
 
-        Ok(CharSplitter { splitter })
+        Ok(GenericSplitter { splitter })
     }
 
     fn split(&self, code: &Bound<'_, PyBytes>) -> PyResult<Vec<PyObject>> {
@@ -77,5 +73,39 @@ impl CharSplitter {
                 })
                 .collect::<Result<Vec<PyObject>, PyErr>>()
         })
+    }
+}
+
+#[pyclass]
+pub struct CharSplitter(GenericSplitter<CharCounter>);
+
+#[pymethods]
+impl CharSplitter {
+    #[new]
+    #[pyo3(signature = (language, max_size = DEFAULT_MAX_SIZE))]
+    fn new(language: &str, max_size: usize) -> PyResult<Self> {
+        let splitter = GenericSplitter::new(language, max_size, CharCounter)?;
+        Ok(CharSplitter(splitter))
+    }
+
+    fn split(&self, code: &Bound<'_, PyBytes>) -> PyResult<Vec<PyObject>> {
+        self.0.split(code)
+    }
+}
+
+#[pyclass]
+pub struct WordSplitter(GenericSplitter<WordCounter>);
+
+#[pymethods]
+impl WordSplitter {
+    #[new]
+    #[pyo3(signature = (language, max_size = DEFAULT_MAX_SIZE))]
+    fn new(language: &str, max_size: usize) -> PyResult<Self> {
+        let splitter = GenericSplitter::new(language, max_size, WordCounter)?;
+        Ok(WordSplitter(splitter))
+    }
+
+    fn split(&self, code: &Bound<'_, PyBytes>) -> PyResult<Vec<PyObject>> {
+        self.0.split(code)
     }
 }
