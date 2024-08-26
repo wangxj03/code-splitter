@@ -1,4 +1,3 @@
-use libloading::{Library, Symbol};
 use pyo3::prelude::*;
 use pyo3::types::PyBytes;
 use tree_sitter::Language;
@@ -11,6 +10,25 @@ const DEFAULT_MAX_SIZE: usize = 512;
 #[pyfunction]
 fn sum_as_string(a: usize, b: usize) -> PyResult<String> {
     Ok((a + b).to_string())
+}
+
+#[derive(Clone, Copy)]
+enum SupportedLanguage {
+    Golang,
+    Markdown,
+    Python,
+    Rust,
+}
+
+impl SupportedLanguage {
+    fn as_language(&self) -> Language {
+        match self {
+            SupportedLanguage::Golang => tree_sitter_go::language(),
+            SupportedLanguage::Markdown => tree_sitter_md::language(),
+            SupportedLanguage::Python => tree_sitter_python::language(),
+            SupportedLanguage::Rust => tree_sitter_rust::language(),
+        }
+    }
 }
 
 #[pyclass]
@@ -35,14 +53,23 @@ struct CharSplitter {
 #[pymethods]
 impl CharSplitter {
     #[new]
-    #[pyo3(signature = (language, max_size = None))]
-    fn new(language: &str, max_size: Option<usize>) -> PyResult<Self> {
-        let lang = load_language(language)
-            .map_err(|e| PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(e))?;
+    #[pyo3(signature = (language, max_size = DEFAULT_MAX_SIZE))]
+    fn new(language: &str, max_size: usize) -> PyResult<Self> {
+        let supported_language = match language.to_lowercase().as_str() {
+            "golang" => SupportedLanguage::Golang,
+            "markdown" => SupportedLanguage::Markdown,
+            "python" => SupportedLanguage::Python,
+            "rust" => SupportedLanguage::Rust,
+            _ => {
+                return Err(PyErr::new::<pyo3::exceptions::PyValueError, _>(
+                    "Unsupported language",
+                ))
+            }
+        };
 
-        let splitter = Splitter::new(lang, CharCounter)
+        let splitter = Splitter::new(supported_language.as_language(), CharCounter)
             .map_err(|e| PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(e.to_string()))?
-            .with_max_size(max_size.unwrap_or(DEFAULT_MAX_SIZE));
+            .with_max_size(max_size);
 
         Ok(CharSplitter { splitter })
     }
@@ -72,21 +99,6 @@ impl CharSplitter {
     }
 }
 
-fn load_language(language: &str) -> Result<Language, String> {
-    let lib_name = format!("tree-sitter-{}", language);
-    let lib =
-        unsafe { Library::new(&lib_name).map_err(|e| format!("Failed to load library: {}", e))? };
-
-    unsafe {
-        let language_fn: Symbol<unsafe extern "C" fn() -> Language> = lib
-            .get(b"tree_sitter_language")
-            .map_err(|e| format!("Failed to find tree_sitter_language function: {}", e))?;
-
-        Ok(language_fn())
-    }
-}
-
-/// A Python module implemented in Rust.
 #[pymodule]
 fn code_splitter(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(sum_as_string, m)?)?;

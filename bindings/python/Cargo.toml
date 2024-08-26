@@ -13,8 +13,11 @@ code-splitter = { path = "../..", features = [
     "tiktoken-rs",
     "tokenizers",
 ]}
-libloading = "0.8"
 pyo3 = "0.21.1"
 tiktoken-rs = { version = "0.5.9", optional = true }
 tokenizers = { version = "0.19.1", features = ["http"], optional = true}
 tree-sitter = "0.22"
+tree-sitter-go = "0.21"
+tree-sitter-md = "0.2"
+tree-sitter-python = "0.21"
+tree-sitter-rust = "0.21"
