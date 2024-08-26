@@ -1,8 +1,11 @@
 mod chunk;
 pub use chunk::Chunk;
 
+mod language;
+pub use language::Language;
+
 mod splitter;
-pub use splitter::{CharSplitter, Language, WordSplitter};
+pub use splitter::{CharSplitter, WordSplitter};
 
 use pyo3::prelude::*;
 

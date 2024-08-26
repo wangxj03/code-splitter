@@ -1,32 +1,11 @@
 use pyo3::prelude::*;
 use pyo3::types::PyBytes;
-use tree_sitter::Language as TreeSitterLanguage;
 
 use crate::chunk::Chunk;
+use crate::language::Language;
 use ::code_splitter::{CharCounter, Sizer, Splitter, WordCounter};
 
 const DEFAULT_MAX_SIZE: usize = 512;
-
-#[pyclass]
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-#[non_exhaustive]
-pub enum Language {
-    Golang,
-    Markdown,
-    Python,
-    Rust,
-}
-
-impl Language {
-    fn as_tree_sitter_language(&self) -> TreeSitterLanguage {
-        match self {
-            Language::Golang => tree_sitter_go::language(),
-            Language::Markdown => tree_sitter_md::language(),
-            Language::Python => tree_sitter_python::language(),
-            Language::Rust => tree_sitter_rust::language(),
-        }
-    }
-}
 
 struct GenericSplitter<T: Sizer> {
     splitter: Splitter<T>,
