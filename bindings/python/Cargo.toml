@@ -9,13 +9,10 @@ name = "code_splitter"
 crate-type = ["cdylib"]
 
 [dependencies]
-code-splitter = { path = "../..", features = [
-    "tiktoken-rs",
-    "tokenizers",
-]}
+code-splitter = { path = "../..", features = ["tiktoken-rs", "tokenizers"] }
 pyo3 = "0.21.1"
-tiktoken-rs = { version = "0.5.9", optional = true }
-tokenizers = { version = "0.19.1", features = ["http"], optional = true}
+tiktoken-rs = "0.5.9"
+tokenizers = { version = "0.19.1", features = ["http"] }
 tree-sitter = "0.22"
 tree-sitter-go = "0.21"
 tree-sitter-md = "0.2"

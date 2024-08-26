@@ -1,11 +1,12 @@
 use pyo3::prelude::*;
 use pyo3::types::PyBytes;
+use tiktoken_rs::{cl100k_base, CoreBPE};
 
 use crate::chunk::Chunk;
 use crate::language::Language;
 use ::code_splitter::{CharCounter, Sizer, Splitter, WordCounter};
 
-const DEFAULT_MAX_SIZE: usize = 512;
+const DEFAULT_MAX_SIZE: usize = 256;
 
 struct GenericSplitter<T: Sizer> {
     splitter: Splitter<T>,
@@ -72,6 +73,25 @@ impl WordSplitter {
     fn new(language: Language, max_size: usize) -> PyResult<Self> {
         let splitter = GenericSplitter::new(language, max_size, WordCounter)?;
         Ok(WordSplitter(splitter))
+    }
+
+    fn split(&self, code: &Bound<'_, PyBytes>) -> PyResult<Vec<PyObject>> {
+        self.0.split(code)
+    }
+}
+
+#[pyclass]
+pub struct TiktokenSplitter(GenericSplitter<CoreBPE>);
+
+#[pymethods]
+impl TiktokenSplitter {
+    #[new]
+    #[pyo3(signature = (language, max_size = DEFAULT_MAX_SIZE))]
+    fn new(language: Language, max_size: usize) -> PyResult<Self> {
+        let bpe = cl100k_base()
+            .map_err(|e| PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(e.to_string()))?;
+        let splitter = GenericSplitter::new(language, max_size, bpe)?;
+        Ok(TiktokenSplitter(splitter))
     }
 
     fn split(&self, code: &Bound<'_, PyBytes>) -> PyResult<Vec<PyObject>> {
