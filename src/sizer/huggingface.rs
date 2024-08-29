@@ -18,8 +18,9 @@ mod tests {
     #[test]
     fn test_tokenizer_size() {
         let tokenizer = Tokenizer::from_pretrained("bert-base-cased", None).unwrap();
-        let text = "I can feel the magic, can you?";
+        let text = "Hello, y'all! How are you 😁 ?";
         let size = tokenizer.size(text).unwrap();
-        assert_eq!(size, 9);
+        // ["Hello", ",", "y", "'", "all", "!", "How", "are", "you", "[UNK]", "?"]
+        assert_eq!(size, 11);
     }
 }
