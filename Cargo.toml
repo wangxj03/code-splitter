@@ -1,11 +1,31 @@
+[workspace]
+members = ["bindings/*"]
+
+[workspace.package]
+version = "0.1.0"
+authors = ["Xiaojing Wang <wangxj03@gmail.com>"]
+edition = "2021"
+description = "Split code into semantic chunks using tree-sitter"
+repository = "https://github.com/wangxj03/code-splitter"
+license = "MIT"
+keywords = ["code", "split", "tokenizer", "ai", "nlp"]
+categories = ["text-processing"]
+
 [package]
 name = "code-splitter"
-version = "0.1.0"
-edition = "2021"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+description.workspace = true
+repository.workspace = true
+license.workspace = true
+keywords.workspace = true
+categories.workspace = true
+exclude = ["/.github", "/.vscode", "/bindings/**"]
 
 [dependencies]
 tiktoken-rs = { version = "0.5.9", optional = true }
-tokenizers = { version = "0.19.1", features = ["http"], optional = true}
+tokenizers = { version = "0.19.1", features = ["http"], optional = true }
 tree-sitter = "0.22"
 
 [dev-dependencies]
