@@ -15,6 +15,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+defaults:
+  run:
+    working-directory: bindings/python
+
 permissions:
   contents: read
 
