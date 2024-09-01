@@ -108,11 +108,12 @@ jobs:
           args: --release --out dist --find-interpreter
           sccache: "true"
           manylinux: musllinux_1_2
+          working-directory: bindings/python
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
           name: wheels-musllinux-${{ matrix.platform.target }}
-          path: dist
+          path: bindings/python/dist
       - name: pytest
         if: ${{ startsWith(matrix.platform.target, 'x86_64') }}
         uses: addnab/docker-run-action@v3
@@ -165,11 +166,12 @@ jobs:
           target: ${{ matrix.platform.target }}
           args: --release --out dist --find-interpreter
           sccache: "true"
+          working-directory: bindings/python
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
           name: wheels-windows-${{ matrix.platform.target }}
-          path: dist
+          path: bindings/python/dist
       - name: pytest
         if: ${{ !startsWith(matrix.platform.target, 'aarch64') }}
         shell: bash
@@ -201,11 +203,12 @@ jobs:
           target: ${{ matrix.platform.target }}
           args: --release --out dist --find-interpreter
           sccache: "true"
+          working-directory: bindings/python
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
           name: wheels-macos-${{ matrix.platform.target }}
-          path: dist
+          path: bindings/python/dist
       - name: pytest
         run: |
           set -e
@@ -224,10 +227,11 @@ jobs:
         with:
           command: sdist
           args: --out dist
+          working-directory: bindings/python
       - name: Upload sdist
         uses: actions/upload-artifact@v4
         with:
-          name: wheels-sdist
+          path: bindings/python/dist
           path: dist
 
   release:
