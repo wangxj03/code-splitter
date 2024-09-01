@@ -1,8 +1,8 @@
 use pyo3::prelude::*;
 use tree_sitter::Language as TreeSitterLanguage;
 
-#[pyclass]
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[pyclass(eq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 #[non_exhaustive]
 pub enum Language {
     Golang,
