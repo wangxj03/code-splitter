@@ -53,7 +53,7 @@ jobs:
         uses: PyO3/maturin-action@v1
         with:
           target: ${{ matrix.platform.target }}
-          args: --release --out -i python3.11
+          args: --release -i python3.11
           sccache: "true"
           manylinux: auto
           working-directory: bindings/python
