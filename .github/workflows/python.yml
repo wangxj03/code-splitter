@@ -42,25 +42,33 @@ jobs:
           #   target: ppc64le
     steps:
       - uses: actions/checkout@v4
-
-      # - name: Install dependencies
-      #   run: |
-      #     sudo apt-get update
-      #     sudo apt-get install -y pkg-config libssl-dev openssl
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
       - name: Build wheels
         uses: PyO3/maturin-action@v1
         with:
           target: ${{ matrix.platform.target }}
-          args: --release -i python3.11
+          args: --release --out dist --find-interpreter
           sccache: "true"
           manylinux: auto
           working-directory: bindings/python
+          before-script-linux: |
+            # If we're running on rhel centos, install needed packages.
+            if command -v yum &> /dev/null; then
+                yum update -y && yum install -y perl-core openssl openssl-devel pkgconfig libatomic
 
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
+                # If we're running on i686 we need to symlink libatomic
+                # in order to build openssl with -latomic flag.
+                if [[ ! -d "/usr/lib64" ]]; then
+                    ln -s /usr/lib/libatomic.so.1 /usr/lib/libatomic.so
+                fi
+            else
+                # If we're running on debian-based system.
+                apt update -y && apt-get install -y libssl-dev openssl pkg-config
+            fi
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
