@@ -1,7 +1,7 @@
 # code-splitter
 
 [![Docs](https://docs.rs/code-splitter/badge.svg)](https://docs.rs/code-splitter/)
-[![License](https://img.shields.io/crates/l/code-splitter)](https://github.com/wangxj03/code-splitter/blob/main/LICENSE.txt)
+[![License](https://img.shields.io/crates/l/code-splitter)](https://github.com/wangxj03/code-splitter/blob/main/LICENSE)
 [![Crates.io](https://img.shields.io/crates/v/code-splitter)](https://crates.io/crates/code-splitter)
 
 - **Rust Crate**: [code-splitter](https://crates.io/crates/code-splitter)
