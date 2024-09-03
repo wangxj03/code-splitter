@@ -67,6 +67,15 @@ jobs:
             elif command -v apt-get &> /dev/null; then
                 # For Debian/Ubuntu
                 apt-get update -y && apt-get install -y libssl-dev openssl pkg-config
+                # Additional steps for ARM architectures
+                if [ "$(uname -m)" = "armv7l" ] || [ "$(uname -m)" = "aarch64" ]; then
+                    apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf
+                    if [ "$(uname -m)" = "armv7l" ]; then
+                        export CARGO_TARGET_ARMV7_UNKNOWN_LINUX_GNUEABIHF_LINKER=arm-linux-gnueabihf-gcc
+                    elif [ "$(uname -m)" = "aarch64" ]; then
+                        export CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc
+                    fi
+                fi
             elif command -v pacman &> /dev/null; then
                 # For Arch Linux
                 pacman -Syu --noconfirm && pacman -S --noconfirm pkgconf openssl
