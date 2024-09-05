@@ -1,0 +1,9 @@
+build:
+    mature build --release
+
+# https://test.pypi.org/manage/account/token/
+upload:
+    maturin upload --repository testpypi target/wheels/*.whl
+
+install:
+    pip install -i https://test.pypi.org/simple/ code-splitter
