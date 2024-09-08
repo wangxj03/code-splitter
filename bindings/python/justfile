@@ -1,9 +1,15 @@
 build:
-    mature build --release
+    maturin build --release
 
 # https://test.pypi.org/manage/account/token/
-upload:
+test-upload:
     maturin upload --repository testpypi target/wheels/*.whl
 
-install:
+test-install:
     pip install -i https://test.pypi.org/simple/ code-splitter
+
+upload:
+    maturin upload target/wheels/*.whl
+
+install:
+    pip install code-splitter
