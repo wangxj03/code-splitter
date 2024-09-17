@@ -13,7 +13,7 @@ categories = ["text-processing"]
 
 [package]
 name = "code-splitter"
-readme = "README"
+readme = "README.md"
 version.workspace = true
 authors.workspace = true
 edition.workspace = true
