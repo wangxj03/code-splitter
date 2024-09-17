@@ -260,8 +260,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
-      - name: Remove root README.md
-        run: rm ../../README.md
       - uses: Swatinem/rust-cache@v2
         with:
           working-directory: bindings/python
