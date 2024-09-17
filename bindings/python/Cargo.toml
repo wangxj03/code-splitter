@@ -1,6 +1,6 @@
 [package]
 name = "code-splitter-python"
-readme = "README.md"
+readme = false
 version.workspace = true
 authors.workspace = true
 edition.workspace = true
