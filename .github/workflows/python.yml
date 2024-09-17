@@ -261,6 +261,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
+        with:
+          working-directory: bindings/python
       - name: Build sdist
         uses: PyO3/maturin-action@v1
         with:
