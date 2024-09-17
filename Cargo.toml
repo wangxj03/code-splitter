@@ -13,6 +13,7 @@ categories = ["text-processing"]
 
 [package]
 name = "code-splitter"
+readme = "README"
 version.workspace = true
 authors.workspace = true
 edition.workspace = true
