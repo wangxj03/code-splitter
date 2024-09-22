@@ -28,7 +28,7 @@ exclude = ["/.github", "/.vscode", "/bindings/**"]
 tiktoken-rs = { version = "0.5.9", optional = true }
 tokenizers = { version = "0.19.1", features = ["http"], optional = true }
 tree-sitter = "0.22"
-openssl = { version = "0.10", features = ["vendored"] }
+# openssl = { version = "0.10", features = ["vendored"] }
 
 [dev-dependencies]
 tree-sitter-go = "0.21"
