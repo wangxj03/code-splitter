@@ -49,8 +49,10 @@ jobs:
         with:
           python-version: "3.12"
       - uses: dtolnay/rust-toolchain@stable
-      # - uses: Swatinem/rust-cache@v2
-      # - name: Install dependencies
+      - uses: Swatinem/rust-cache@v2
+      - name: Install dependencies
+        run: |
+          sudo apt-get install libssl-dev
       #   run: |
       #     if [ "${{ matrix.platform.target }}" = "aarch64" ]; then
       #       sudo apt-get update
