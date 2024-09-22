@@ -53,7 +53,7 @@ jobs:
       - name: Install dependencies
         run: |
           if [ "${{ matrix.platform.target }}" = "aarch64" ]; then
-            sudo apt install musl-tools
+            export CFLAGS_aarch64_unknown_linux_gnu="-D__ARM_ARCH=8"
           fi
       - name: Build wheels
         uses: PyO3/maturin-action@v1
