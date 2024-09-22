@@ -26,74 +26,7 @@ permissions:
   contents: read
 
 jobs:
-  linux:
-    runs-on: ${{ matrix.platform.runner }}
-    strategy:
-      matrix:
-        platform:
-          # - runner: ubuntu-latest
-          #   target: x86_64
-          # - runner: ubuntu-latest
-          #   target: x86
-          - runner: ubuntu-latest
-            target: aarch64
-          - runner: ubuntu-latest
-            target: armv7
-          # - runner: ubuntu-latest
-          #   target: s390x
-          - runner: ubuntu-latest
-            target: ppc64le
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
-      # - name: Install dependencies
-      #   run: |
-      #     if [ "${{ matrix.platform.target }}" = "aarch64" ]; then
-      #       export CFLAGS_aarch64_unknown_linux_gnu="-D__ARM_ARCH=8"
-      #     fi
-      - name: Build wheels
-        uses: PyO3/maturin-action@v1
-        with:
-          target: ${{ matrix.platform.target }}
-          args: --release --out dist --find-interpreter
-          sccache: "true"
-          manylinux: 2_28
-          working-directory: bindings/python
-      - name: Upload wheels
-        uses: actions/upload-artifact@v4
-        with:
-          name: wheels-linux-${{ matrix.platform.target }}
-          path: bindings/python/dist
-          if-no-files-found: error
-      - name: pytest
-        if: ${{ startsWith(matrix.platform.target, 'x86_64') }}
-        shell: bash
-        run: |
-          set -e
-          pip install --no-index --find-links dist --force-reinstall code-splitter
-          pip install pytest
-          pytest -vv
-      # - name: pytest
-      #   if: ${{ !startsWith(matrix.platform.target, 'x86') && matrix.platform.target != 'ppc64' }}
-      #   uses: uraimo/run-on-arch-action@v2
-      #   with:
-      #     arch: ${{ matrix.platform.target }}
-      #     distro: ubuntu22.04
-      #     githubToken: ${{ github.token }}
-      #     install: |
-      #       apt-get update
-      #       apt-get install -y --no-install-recommends python3 python3-pip
-      #       pip3 install -U pip pytest
-      #     run: |
-      #       set -e
-      #       pip install --no-index --find-links dist --force-reinstall code-splitter
-      #       pytest -vv
-
-  # musllinux:
+  # linux:
   #   runs-on: ${{ matrix.platform.runner }}
   #   strategy:
   #     matrix:
@@ -106,54 +39,121 @@ jobs:
   #           target: aarch64
   #         - runner: ubuntu-latest
   #           target: armv7
+  #         # - runner: ubuntu-latest
+  #         #   target: s390x
+  #         - runner: ubuntu-latest
+  #           target: ppc64le
   #   steps:
   #     - uses: actions/checkout@v4
   #     - uses: actions/setup-python@v5
   #       with:
-  #         python-version: 3.x
+  #         python-version: "3.12"
+  #     - uses: dtolnay/rust-toolchain@stable
+  #     - uses: Swatinem/rust-cache@v2
+  #     # - name: Install dependencies
+  #     #   run: |
+  #     #     if [ "${{ matrix.platform.target }}" = "aarch64" ]; then
+  #     #       export CFLAGS_aarch64_unknown_linux_gnu="-D__ARM_ARCH=8"
+  #     #     fi
   #     - name: Build wheels
   #       uses: PyO3/maturin-action@v1
   #       with:
   #         target: ${{ matrix.platform.target }}
   #         args: --release --out dist --find-interpreter
   #         sccache: "true"
-  #         manylinux: musllinux_1_2
+  #         manylinux: 2_28
   #         working-directory: bindings/python
   #     - name: Upload wheels
   #       uses: actions/upload-artifact@v4
   #       with:
-  #         name: wheels-musllinux-${{ matrix.platform.target }}
+  #         name: wheels-linux-${{ matrix.platform.target }}
   #         path: bindings/python/dist
+  #         if-no-files-found: error
   #     - name: pytest
   #       if: ${{ startsWith(matrix.platform.target, 'x86_64') }}
-  #       uses: addnab/docker-run-action@v3
-  #       with:
-  #         image: alpine:latest
-  #         options: -v ${{ github.workspace }}:/io -w /io
-  #         run: |
-  #           set -e
-  #           apk add py3-pip py3-virtualenv
-  #           python3 -m virtualenv .venv
-  #           source .venv/bin/activate
-  #           pip install code-splitter --no-index --find-links dist --force-reinstall
-  #           pip install pytest
-  #           pytest
-  #     - name: pytest
-  #       if: ${{ !startsWith(matrix.platform.target, 'x86') }}
-  #       uses: uraimo/run-on-arch-action@v2
-  #       with:
-  #         arch: ${{ matrix.platform.target }}
-  #         distro: alpine_latest
-  #         githubToken: ${{ github.token }}
-  #         install: |
-  #           apk add py3-virtualenv
-  #         run: |
-  #           set -e
-  #           python3 -m virtualenv .venv
-  #           source .venv/bin/activate
-  #           pip install pytest
-  #           pip install code-splitter --find-links dist --force-reinstall
-  #           pytest
+  #       shell: bash
+  #       run: |
+  #         set -e
+  #         pip install --no-index --find-links dist --force-reinstall code-splitter
+  #         pip install pytest
+  #         pytest -vv
+  #     # - name: pytest
+  #     #   if: ${{ !startsWith(matrix.platform.target, 'x86') && matrix.platform.target != 'ppc64' }}
+  #     #   uses: uraimo/run-on-arch-action@v2
+  #     #   with:
+  #     #     arch: ${{ matrix.platform.target }}
+  #     #     distro: ubuntu22.04
+  #     #     githubToken: ${{ github.token }}
+  #     #     install: |
+  #     #       apt-get update
+  #     #       apt-get install -y --no-install-recommends python3 python3-pip
+  #     #       pip3 install -U pip pytest
+  #     #     run: |
+  #     #       set -e
+  #     #       pip install --no-index --find-links dist --force-reinstall code-splitter
+  #     #       pytest -vv
+
+  musllinux:
+    runs-on: ${{ matrix.platform.runner }}
+    strategy:
+      matrix:
+        platform:
+          - runner: ubuntu-latest
+            target: x86_64
+          - runner: ubuntu-latest
+            target: x86
+          - runner: ubuntu-latest
+            target: aarch64
+          - runner: ubuntu-latest
+            target: armv7
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+      - name: Build wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.platform.target }}
+          args: --release --out dist --find-interpreter
+          sccache: "true"
+          manylinux: musllinux_1_2
+          working-directory: bindings/python
+      - name: Upload wheels
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheels-musllinux-${{ matrix.platform.target }}
+          path: bindings/python/dist
+      - name: pytest
+        if: ${{ startsWith(matrix.platform.target, 'x86_64') }}
+        uses: addnab/docker-run-action@v3
+        with:
+          image: alpine:latest
+          options: -v ${{ github.workspace }}:/io -w /io
+          run: |
+            set -e
+            apk add py3-pip py3-virtualenv
+            python3 -m virtualenv .venv
+            source .venv/bin/activate
+            pip install --no-index --find-links dist --force-reinstall code-splitter
+            pip install pytest
+            pytest -vv
+      # - name: pytest
+      #   if: ${{ !startsWith(matrix.platform.target, 'x86') }}
+      #   uses: uraimo/run-on-arch-action@v2
+      #   with:
+      #     arch: ${{ matrix.platform.target }}
+      #     distro: alpine_latest
+      #     githubToken: ${{ github.token }}
+      #     install: |
+      #       apk add py3-virtualenv
+      #     run: |
+      #       set -e
+      #       python3 -m virtualenv .venv
+      #       source .venv/bin/activate
+      #       pip install pytest
+      #       pip install code-splitter --find-links dist --force-reinstall
+      #       pytest
 
   # windows:
   #   runs-on: ${{ matrix.platform.runner }}
