@@ -74,9 +74,7 @@ jobs:
         shell: bash
         run: |
           set -e
-          python3 -m venv .venv
-          source .venv/bin/activate
-          pip install code-splitter --find-links dist --force-reinstall
+          pip install --no-index --find-links dist --force-reinstall code-splitter
           pip install pytest
           pytest -vv
       - name: pytest
@@ -92,7 +90,7 @@ jobs:
             pip3 install -U pip pytest
           run: |
             set -e
-            pip3 install code-splitter --find-links dist --force-reinstall
+            pip install --no-index --find-links dist --force-reinstall code-splitter
             pytest -vv
 
   # musllinux:
