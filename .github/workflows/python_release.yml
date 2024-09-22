@@ -50,11 +50,11 @@ jobs:
           python-version: "3.12"
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
-      - name: Install dependencies
-        run: |
-          if [ "${{ matrix.platform.target }}" = "aarch64" ]; then
-            export CFLAGS_aarch64_unknown_linux_gnu="-D__ARM_ARCH=8"
-          fi
+      # - name: Install dependencies
+      #   run: |
+      #     if [ "${{ matrix.platform.target }}" = "aarch64" ]; then
+      #       export CFLAGS_aarch64_unknown_linux_gnu="-D__ARM_ARCH=8"
+      #     fi
       - name: Build wheels
         uses: PyO3/maturin-action@v1
         with:
