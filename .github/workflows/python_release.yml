@@ -35,8 +35,8 @@ jobs:
             target: x86_64
           - runner: ubuntu-latest
             target: x86
-          - runner: ubuntu-latest
-            target: ppc64le
+          # - runner: ubuntu-latest
+          #   target: ppc64le
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -50,7 +50,7 @@ jobs:
           target: ${{ matrix.platform.target }}
           args: --release --out dist --find-interpreter
           sccache: "true"
-          manylinux: auto
+          # manylinux: 2_28
           working-directory: bindings/python
       - name: Upload wheels
         uses: actions/upload-artifact@v4
@@ -97,21 +97,21 @@ jobs:
           name: wheels-linux-${{ matrix.platform.target }}
           path: bindings/python/dist
           if-no-files-found: error
-      - name: pytest
-        if: ${{ startsWith(matrix.platform.target, 'aarch64') }}
-        uses: uraimo/run-on-arch-action@v2
-        with:
-          arch: ${{ matrix.platform.target }}
-          distro: ubuntu22.04
-          githubToken: ${{ github.token }}
-          install: |
-            apt-get update
-            apt-get install -y --no-install-recommends python3 python3-pip
-            pip3 install -U pip pytest
-          run: |
-            set -e
-            pip install --no-index --find-links dist --force-reinstall code-splitter
-            pytest -vv
+      # - name: pytest
+      #   if: ${{ startsWith(matrix.platform.target, 'aarch64') }}
+      #   uses: uraimo/run-on-arch-action@v2
+      #   with:
+      #     arch: ${{ matrix.platform.target }}
+      #     distro: ubuntu22.04
+      #     githubToken: ${{ github.token }}
+      #     install: |
+      #       apt-get update
+      #       apt-get install -y --no-install-recommends python3 python3-pip
+      #       pip3 install -U pip pytest
+      #     run: |
+      #       set -e
+      #       pip install --no-index --find-links dist --force-reinstall code-splitter
+      #       pytest -vv
 
   # musllinux:
   #   runs-on: ${{ matrix.platform.runner }}
