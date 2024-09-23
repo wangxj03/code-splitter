@@ -124,15 +124,14 @@ jobs:
         with:
           name: wheels-musllinux-${{ matrix.platform.target }}
           path: bindings/python/dist
-      # - name: pytest
-      #   if: ${{ startsWith(matrix.platform.target, 'x86_64') }}
-      #   uses: uraimo/run-on-arch-action@v2
-      #   with:
-      #     run: |
-      #       set -e
-      #       pip install --no-index --find-links dist --force-reinstall code-splitter
-      #       pip install pytest
-      #       pytest -vv
+      - name: pytest
+        if: ${{ startsWith(matrix.platform.target, 'x86_64') }}
+        shell: bash
+        run: |
+          set -e
+          pip install --no-index --find-links dist --force-reinstall code-splitter
+          pip install pytest
+          pytest -vv
 
       #   # uses: addnab/docker-run-action@v3
       #   # with:
@@ -146,22 +145,22 @@ jobs:
       #   #     pip install --no-index --find-links dist --force-reinstall code-splitter
       #   #     pip install pytest
       #   #     pytest -vv
-      - name: pytest
-        if: ${{ !startsWith(matrix.platform.target, 'x86_64') }}
-        uses: uraimo/run-on-arch-action@v2
-        with:
-          arch: ${{ matrix.platform.target }}
-          distro: alpine_latest
-          githubToken: ${{ github.token }}
-          install: |
-            apk add py3-virtualenv
-          run: |
-            set -e
-            python3 -m virtualenv .venv
-            source .venv/bin/activate
-            pip install pytest
-            pip install --no-index --find-links dist --force-reinstall code-splitter
-            pytest -vv
+      # - name: pytest
+      #   if: ${{ startsWith(matrix.platform.target, 'x86_64') }}
+      #   uses: uraimo/run-on-arch-action@v2
+      #   with:
+      #     arch: ${{ matrix.platform.target }}
+      #     distro: alpine_latest
+      #     githubToken: ${{ github.token }}
+      #     install: |
+      #       apk add py3-virtualenv
+      #     run: |
+      #       set -e
+      #       python3 -m virtualenv .venv
+      #       source .venv/bin/activate
+      #       pip install pytest
+      #       pip install --no-index --find-links dist --force-reinstall code-splitter
+      #       pytest -vv
 
   # windows:
   #   runs-on: ${{ matrix.platform.runner }}
