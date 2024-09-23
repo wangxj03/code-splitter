@@ -49,13 +49,13 @@ jobs:
         with:
           python-version: "3.12"
       - uses: dtolnay/rust-toolchain@stable
-      # - uses: Swatinem/rust-cache@v2
+      - uses: Swatinem/rust-cache@v2
       - name: Build wheels
         uses: PyO3/maturin-action@v1
         with:
           target: ${{ matrix.platform.target }}
           args: --release --out dist --find-interpreter
-          sccache: "true"
+          # sccache: "true"
           manylinux: 2_28
           working-directory: bindings/python
       - name: Upload wheels
