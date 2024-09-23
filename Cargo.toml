@@ -2,7 +2,7 @@
 members = ["bindings/*"]
 
 [workspace.package]
-version = "0.1.4"
+version = "0.1.5"
 authors = ["Xiaojing Wang <wangxj03@gmail.com>"]
 edition = "2021"
 description = "Split code into semantic chunks using tree-sitter"
