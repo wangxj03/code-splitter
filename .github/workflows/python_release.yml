@@ -41,7 +41,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: 3.x
+          architecture: ${{ matrix.platform.target }}
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
       - name: Build wheels
@@ -49,7 +50,7 @@ jobs:
         with:
           target: ${{ matrix.platform.target }}
           args: --release --out dist --find-interpreter
-          # sccache: "true"
+          sccache: "true"
           manylinux: auto
           working-directory: bindings/python
       - name: Upload wheels
