@@ -124,28 +124,31 @@ jobs:
         with:
           name: wheels-musllinux-${{ matrix.platform.target }}
           path: bindings/python/dist
+      # - name: pytest
+      #   if: ${{ startsWith(matrix.platform.target, 'x86_64') }}
+      #   shell: bash
+      #   run: |
+      #     set -e
+      #     ls -l dist
+      #     pip install -v --no-index --find-links dist --force-reinstall code-splitter
+      #     pip install pytest
+      #     pytest -vv
+
       - name: pytest
         if: ${{ startsWith(matrix.platform.target, 'x86_64') }}
-        shell: bash
-        run: |
-          set -e
-          ls -l dist
-          pip install -v --no-index --find-links dist --force-reinstall code-splitter
-          pip install pytest
-          pytest -vv
+        uses: addnab/docker-run-action@v3
+        with:
+          image: alpine:latest
+          options: -v ${{ github.workspace }}:/io -w /io
+          run: |
+            set -e
+            apk add py3-pip py3-virtualenv
+            python3 -m virtualenv .venv
+            source .venv/bin/activate
+            pip install --no-index --find-links dist --force-reinstall code-splitter
+            pip install pytest
+            pytest -vv
 
-      #   # uses: addnab/docker-run-action@v3
-      #   # with:
-      #   #   image: alpine:latest
-      #   #   options: -v ${{ github.workspace }}:/io -w /io
-      #   #   run: |
-      #   #     set -e
-      #   #     apk add py3-pip py3-virtualenv
-      #   #     python3 -m virtualenv .venv
-      #   #     source .venv/bin/activate
-      #   #     pip install --no-index --find-links dist --force-reinstall code-splitter
-      #   #     pip install pytest
-      #   #     pytest -vv
       # - name: pytest
       #   if: ${{ startsWith(matrix.platform.target, 'x86_64') }}
       #   uses: uraimo/run-on-arch-action@v2
