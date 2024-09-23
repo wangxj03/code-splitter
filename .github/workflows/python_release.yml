@@ -49,11 +49,9 @@ jobs:
           target: ${{ matrix.platform.target }}
           args: --release --out dist --find-interpreter
           sccache: "true"
-          manylinux: 2_28
+          container: off
+          # manylinux: 2_28
           working-directory: bindings/python
-          before-script-linux: |
-            apt-get update
-            apt install libssl-dev
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
