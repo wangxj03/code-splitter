@@ -129,7 +129,8 @@ jobs:
         shell: bash
         run: |
           set -e
-          pip install --no-index --find-links dist --force-reinstall code-splitter
+          ls -l dist
+          pip install -v --no-index --find-links dist --force-reinstall code-splitter
           pip install pytest
           pytest -vv
 
