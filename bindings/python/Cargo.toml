@@ -22,6 +22,7 @@ tiktoken-rs = "0.5.9"
 tokenizers = { version = "0.19.1", features = ["http"] }
 tree-sitter = "0.22"
 tree-sitter-go = "0.21"
+tree-sitter-java = "0.21"
 tree-sitter-md = "0.2"
 tree-sitter-python = "0.21"
 tree-sitter-rust = "0.21"
