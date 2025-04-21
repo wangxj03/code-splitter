@@ -1,5 +1,6 @@
 use code_splitter::{CharCounter, Sizer, Splitter, WordCounter};
 use std::fs;
+use tree_sitter::Language;
 
 const TEST_FILE: &str = "tests/testdata/rectangle.py";
 
@@ -12,9 +13,8 @@ where
     T: Sizer,
 {
     let code = read_test_file();
-    let lang = tree_sitter_python::language();
 
-    let splitter = Splitter::new(lang, sizer)
+    let splitter = Splitter::new(Language::new(tree_sitter_python::LANGUAGE), sizer)
         .expect("Failed to create python splitter")
         .with_max_size(max_size);
     let chunks = splitter.split(&code).expect("Failed to split python code");

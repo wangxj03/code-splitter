@@ -17,11 +17,11 @@ crate-type = ["cdylib"]
 
 [dependencies]
 code-splitter = { path = "../..", features = ["tiktoken-rs", "tokenizers"] }
-pyo3 = { version = "0.22.2", features = ["extension-module"] }
-tiktoken-rs = "0.5.9"
-tokenizers = { version = "0.19.1", features = ["http"] }
-tree-sitter = "0.22"
-tree-sitter-go = "0.21"
-tree-sitter-md = "0.2"
-tree-sitter-python = "0.21"
-tree-sitter-rust = "0.21"
+pyo3 = { version = "0.24.1", features = ["extension-module"] }
+tiktoken-rs = "0.6.0"
+tokenizers = { version = "0.21.1", features = ["http"] }
+tree-sitter = "0.25.3"
+tree-sitter-go = "0.23.4"
+tree-sitter-md = "0.3.2"
+tree-sitter-python = "0.23.6"
+tree-sitter-rust = "0.24.0"

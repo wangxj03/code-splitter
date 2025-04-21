@@ -4,10 +4,10 @@ use crate::sizer::Sizer;
 /// A marker struct for counting words in code chunks.
 ///
 /// ```
+/// use tree_sitter::Language;
 /// use code_splitter::{Splitter, WordCounter};
 ///
-/// let lang = tree_sitter_md::language();
-/// let splitter = Splitter::new(lang, WordCounter).unwrap();
+/// let splitter = Splitter::new(Language::new(tree_sitter_md::LANGUAGE), WordCounter).unwrap();
 ///
 /// let code = b"hello, world!";
 /// let chunks = splitter.split(code).unwrap();

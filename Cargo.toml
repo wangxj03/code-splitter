@@ -25,16 +25,15 @@ categories.workspace = true
 exclude = ["/.github", "/.vscode", "/bindings/**"]
 
 [dependencies]
-tiktoken-rs = { version = "0.5.9", optional = true }
-tokenizers = { version = "0.19.1", features = ["http"], optional = true }
-tree-sitter = "0.22"
-openssl = { version = "0.10", features = ["vendored"] }
+tiktoken-rs = { version = "0.6.0", optional = true }
+tokenizers = { version = "0.21.1", features = ["http"], optional = true }
+tree-sitter = "0.25.3"
 
 [dev-dependencies]
-tree-sitter-go = "0.21"
-tree-sitter-md = "0.2"
-tree-sitter-python = "0.21"
-tree-sitter-rust = "0.21"
+tree-sitter-go = "0.23.4"
+tree-sitter-md = "0.3.2"
+tree-sitter-python = "0.23.6"
+tree-sitter-rust = "0.24.0"
 
 [features]
 tiktoken-rs = ["dep:tiktoken-rs"]
